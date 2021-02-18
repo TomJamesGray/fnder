@@ -1,26 +1,48 @@
 package com.gray.datasources;
 
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LocalWiki extends BaseSource{
+    public MdFile[] mdFiles;
+
     public LocalWiki() throws IOException {
 //        Find all MD files in data directory
         final Path dataDir = Paths.get("/tmp/data");
-        List<Path> mdFiles = findMdFiles(dataDir);
-        System.out.println(mdFiles);
-        for (Path file : mdFiles){
-            getTagsForMdFile(file);
+        Path[] mdFilesPaths = findMdFiles(dataDir).toArray(new Path[0]);
+
+        this.mdFiles = new MdFile[mdFilesPaths.length];
+        for(int i =0;i < mdFilesPaths.length; i++){
+            this.mdFiles[i] = new MdFile(mdFilesPaths[i],
+                    getTagsForMdFile(mdFilesPaths[i]));
         }
+    }
+
+    /**
+     * Searches for MD files with tags similar to query with a fuzzy search
+     * @param query Query String
+     * @param maxResults Maximum amount of results that can be returned
+     */
+    public void searchFor(String query,int maxResults){
+        for (MdFile f : this.mdFiles){
+//            Get score of highest matching tag with current query for each file
+            f.setScoreForQuery(
+                    FuzzySearch.extractOne(query,f.tags).getScore()
+            );
+        }
+        MdFile[] scoreSort = Arrays.copyOf(this.mdFiles,this.mdFiles.length);
+        Arrays.sort(scoreSort,
+                Comparator.comparingInt(MdFile::getScoreForQuery));
+        System.out.println(scoreSort);
     }
 
     /**

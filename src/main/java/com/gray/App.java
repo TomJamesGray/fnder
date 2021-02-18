@@ -12,5 +12,6 @@ public class App
 {
     public static void main( String[] args ) throws IOException {
         LocalWiki base = new LocalWiki();
+        base.searchFor("testing",5);
     }
 }
