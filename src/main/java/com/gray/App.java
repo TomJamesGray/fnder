@@ -1,5 +1,7 @@
 package com.gray;
 
+import com.gray.datasources.LocalWiki;
+
 /**
  * Hello world!
  *
@@ -8,6 +10,6 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World3!" );
+        LocalWiki base = new LocalWiki();
     }
 }
