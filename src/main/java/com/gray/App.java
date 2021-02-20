@@ -1,14 +1,12 @@
 package com.gray;
 
 import com.gray.datasources.BaseSource;
-import com.gray.datasources.DataSourceResult;
 import com.gray.datasources.LocalWiki;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.graalvm.compiler.nodeinfo.InputType;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -19,18 +17,23 @@ import java.util.Scanner;
 public class App extends Application {
     private SearchController searchController;
     private BaseSource[] dataSources;
+    public final boolean background = false;
+    public final int serverPort = 6000;
     /**
      * Starts server that listens for message on port to draw the GUI
      * @param port Port number to listen on
      * @throws IOException
      */
-    public static void startServer(int port) throws IOException {
+    public boolean listenForStart(int port) throws Exception {
         ServerSocket server = new ServerSocket(port);
         while(true){
             Socket socket = server.accept();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String msg = in.readLine();
             System.out.println(msg);
+            if (msg.equals("START")){
+                return(true);
+            }
             in.close();
             socket.close();
         }
@@ -39,10 +42,10 @@ public class App extends Application {
         dataSources = new BaseSource[]{new LocalWiki()};
     }
     public static void main( String[] args ) throws Exception {
-        launch(args);
+        launch();
     }
 
-    public void init() throws IOException {
+    public void init() throws Exception {
         initialiseDataSources();
         System.out.println(this.dataSources);
     }
@@ -60,7 +63,14 @@ public class App extends Application {
         searchController.setDataSources(dataSources);
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.show();
+        if(background) {
+            if (listenForStart(serverPort)) {
+                stage.show();
+            }
+        }
+        else{
+            stage.show();
+        }
     }
 
     public static String getInput(String prompt){
