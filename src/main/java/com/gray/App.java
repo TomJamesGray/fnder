@@ -4,15 +4,19 @@ import com.gray.datasources.BaseSource;
 import com.gray.datasources.DataSourceResult;
 import com.gray.datasources.LocalWiki;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.graalvm.compiler.nodeinfo.InputType;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.Scanner;
 
-public class App
+public class App extends Application
 {
     /**
      * Starts server that listens for message on port to draw the GUI
@@ -32,7 +36,7 @@ public class App
     }
     public static void main( String[] args ) throws Exception {
         BaseSource[] dataSources = {new LocalWiki()};
-        startGUI();
+        launch();
 
 
 /*        while(true){
@@ -49,8 +53,20 @@ public class App
         }*/
     }
 
-    public static void startGUI(){
-        Application.launch(GUIApp.class, new String[]{});
+    @Override
+    public void start(Stage stage) throws Exception {
+        stage.setHeight(100);
+        stage.setWidth(500);
+
+        FXMLLoader loader = new FXMLLoader();
+        URL xmlUrl = getClass().getResource("/searchInterface.fxml");
+        loader.setLocation(xmlUrl);
+        Parent root = loader.load();
+        SearchController searchController = loader.getController();
+
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
     public static String getInput(String prompt){

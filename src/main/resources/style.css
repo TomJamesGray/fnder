@@ -1,1 +1,16 @@
+*{
+    -search-bar-bg:#DCDCDC;
+}
 
+#searchRoot{
+    -fx-background-color: -search-bar-bg;
+}
+.searchBox{
+    width: 100%;
+    -fx-pref-height:90px;
+    -fx-control-inner-background: -search-bar-bg;
+    -fx-background-color: -search-bar-bg;
+    -fx-font-size: 20px;
+    -fx-font-family: 'DejaVu Sans';
+    -fx-font-style: normal;
+}
