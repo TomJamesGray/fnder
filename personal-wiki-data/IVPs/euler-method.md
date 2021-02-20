@@ -1,3 +1,3 @@
 <!---
-odes "numerical methods" ivp "implicit method"
+odes "numerical methods" ivp "explicit method" "euler method"
 --->

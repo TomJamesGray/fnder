@@ -104,6 +104,11 @@ public class LocalWiki extends BaseSource{
         return(tags);
     }
 
+    /**
+     * Finds all Markdown files (.md suffix) in a directory, and it's child directories
+     * @param dir Directory to search
+     * @return List of paths to the .md files
+     */
     public static List<Path> findMdFiles(Path dir){
         List<Path> mdFiles = new ArrayList<Path>();
         File folder =  new File(dir.toString());

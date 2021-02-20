@@ -20,4 +20,8 @@ public class MdFile extends DataSourceResult{
     public void setScoreForQuery(int scoreForQuery) {
         this.scoreForQuery = scoreForQuery;
     }
+
+    public String toString(){
+        return getClass().getSimpleName() + "[file name=" + dir.getFileName() + "]";
+    }
 }
