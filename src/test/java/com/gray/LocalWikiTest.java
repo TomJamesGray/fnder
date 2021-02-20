@@ -1,6 +1,8 @@
 package com.gray;
 
 import com.gray.datasources.LocalWiki;
+
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.graalvm.util.CollectionsUtil;
@@ -20,8 +22,6 @@ public class LocalWikiTest {
                 "test-wiki-data","one.md");
         String[] retrievedTags = LocalWiki.getTagsForMdFile(wikiTest).toArray(new String[0]);
         String[] tags = {"tag1", "tag one", "tag two"};
-        System.out.println(Arrays.toString(retrievedTags));
-        System.out.println(Arrays.toString(tags));
-        assertTrue(Arrays.equals(tags,retrievedTags));
+        assertArrayEquals(tags, retrievedTags);
     }
 }
