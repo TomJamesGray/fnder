@@ -1,5 +1,6 @@
 package com.gray.datasources;
 
+import javafx.util.Pair;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 import java.io.File;
@@ -22,8 +23,10 @@ public class LocalWiki implements BaseSource{
 
         this.mdFiles = new MdFile[mdFilesPaths.length];
         for(int i =0;i < mdFilesPaths.length; i++){
+            Pair<String,List<String>> titleAndTags = getTagsAndTitleForMdFile(mdFilesPaths[i]);
             this.mdFiles[i] = new MdFile(mdFilesPaths[i],
-                    getTagsForMdFile(mdFilesPaths[i]));
+                    titleAndTags.getKey(),
+                    titleAndTags.getValue());
         }
     }
 
@@ -74,19 +77,35 @@ public class LocalWiki implements BaseSource{
      * 'tag1' tag2 "tag 3"
      * ---!>
      * @param fPath Markdown file
-     * @return List of strings
+     * @return Pair<Title,Tags>
      */
-    public static List<String> getTagsForMdFile(Path fPath) throws IOException {
+    public static Pair<String,List<String>> getTagsAndTitleForMdFile(Path fPath) throws IOException {
         String tagsLine = new String();
+        String title = null;
+        Boolean fScannerClosed = false;
         Scanner fScanner = new Scanner(new FileReader(fPath.toString()));
         while (fScanner.hasNext()){
-            if(fScanner.nextLine().startsWith("<!---")){
+            String nL = fScanner.nextLine();
+            if(nL.startsWith("<!---")) {
 //                Next line contains tags
                 tagsLine = fScanner.nextLine();
-                fScanner.close();
-                break;
+
+            }
+            else if(nL.startsWith("--->")){
+//                Next line contains title
+                if(fScanner.hasNext()) {
+                    title = fScanner.nextLine().replace("#", "");
+                    System.out.println("Title " + title);
+                    fScanner.close();
+                    fScannerClosed = true;
+                    break;
+                }
             }
         }
+        if(!fScannerClosed){
+            fScanner.close();
+        }
+
         List<String> tags = new ArrayList<String>();
         Pattern regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
         Matcher tagMatcher =regex.matcher(tagsLine);
@@ -104,7 +123,7 @@ public class LocalWiki implements BaseSource{
                 tags.add(tagMatcher.group());
             }
         }
-        return(tags);
+        return(new Pair<>(title,tags));
     }
 
     /**

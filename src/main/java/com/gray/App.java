@@ -61,6 +61,7 @@ public class App extends Application {
         Parent root = loader.load();
         searchController = loader.getController();
         searchController.setDataSources(dataSources);
+        searchController.setStage(stage);
         Scene scene = new Scene(root);
         stage.setScene(scene);
         if(background) {

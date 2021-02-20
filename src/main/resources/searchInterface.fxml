@@ -12,6 +12,7 @@
             prefHeight="200.0" prefWidth="700.0"
             fx:id="searchRoot"
             stylesheets="style.css">
-<TextField styleClass="searchBox" fx:id="searchBox" promptText="Search..."
-onKeyTyped="#keyPressSearchBox"/>
+    <TextField styleClass="searchBox" fx:id="searchBox" promptText="Search..."
+        onKeyTyped="#keyPressSearchBox"/>
+    <VBox styleClass="resultsContainer" fx:id="resultsContainer"/>
 </VBox>

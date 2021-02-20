@@ -14,3 +14,7 @@
     -fx-font-family: 'DejaVu Sans';
     -fx-font-style: normal;
 }
+.searchResult{
+    width:100%;
+    height:50px;
+}

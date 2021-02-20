@@ -7,8 +7,10 @@ public class MdFile extends DataSourceResult{
     public List<String> tags;
     public Path dir;
     private int scoreForQuery;
+    public String title;
 
-    public MdFile(Path dir, List<String> tags){
+    public MdFile(Path dir,String title, List<String> tags){
+        super(title);
         this.dir = dir;
         this.tags = tags;
     }
@@ -22,6 +24,7 @@ public class MdFile extends DataSourceResult{
     }
 
     public String toString(){
-        return getClass().getSimpleName() + "[file name=" + dir.getFileName() + "]";
+        return String.format("%s[file name=%s,title=%s]",getClass().getSimpleName(),
+                dir.getFileName(),title);
     }
 }
