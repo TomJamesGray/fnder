@@ -3,6 +3,8 @@ package com.gray;
 import com.gray.datasources.BaseSource;
 import com.gray.datasources.DataSourceResult;
 import com.gray.datasources.LocalWiki;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import org.graalvm.compiler.nodeinfo.InputType;
 
 import java.io.*;
@@ -10,8 +12,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class App 
+public class App
 {
+    /**
+     * Starts server that listens for message on port to draw the GUI
+     * @param port Port number to listen on
+     * @throws IOException
+     */
     public static void startServer(int port) throws IOException {
         ServerSocket server = new ServerSocket(port);
         while(true){
@@ -23,12 +30,12 @@ public class App
             socket.close();
         }
     }
-    public static void main( String[] args ) throws IOException {
+    public static void main( String[] args ) throws Exception {
         BaseSource[] dataSources = {new LocalWiki()};
-        LocalWiki base = new LocalWiki();
-        startServer(6000);
+        startGUI();
 
-        while(true){
+
+/*        while(true){
             String query = getInput("Search query: ");
             for (BaseSource dSource : dataSources){
                 DataSourceResult[] results = dSource.searchFor(query,2);
@@ -39,7 +46,11 @@ public class App
                 System.out.println();
             }
 
-        }
+        }*/
+    }
+
+    public static void startGUI(){
+        Application.launch(GUIApp.class, new String[]{});
     }
 
     public static String getInput(String prompt){
