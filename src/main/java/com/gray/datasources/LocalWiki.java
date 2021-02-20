@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LocalWiki extends BaseSource{
+public class LocalWiki implements BaseSource{
     public MdFile[] mdFiles;
 
     public LocalWiki() throws IOException {
@@ -45,7 +45,6 @@ public class LocalWiki extends BaseSource{
         MdFile[] scoreSort = Arrays.copyOf(this.mdFiles,this.mdFiles.length);
         Arrays.sort(scoreSort,
                 Comparator.comparingInt(MdFile::getScoreForQuery));
-        System.out.println(scoreSort);
 
 //         Get results to be returned
         List<MdFile> scoresOutput = new ArrayList<MdFile>();
@@ -62,6 +61,10 @@ public class LocalWiki extends BaseSource{
         }
         return (scoresOutput.toArray(new MdFile[0]));
 
+    }
+
+    public String getSourceName() {
+        return "Local Wiki";
     }
 
     /**

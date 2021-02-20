@@ -1,10 +1,6 @@
 package com.gray.datasources;
 
-public class BaseSource {
-    public BaseSource(){
-//        Initialise the data source
-    }
-    public void searchFor(String query){
-//        Search
-    }
+public interface BaseSource {
+    DataSourceResult[] searchFor(String query, int maxResults);
+    String getSourceName();
 }
