@@ -3,7 +3,7 @@ package com.gray.datasources;
 import java.nio.file.Path;
 import java.util.List;
 
-public class MdFile {
+public class MdFile extends DataSourceResult{
     public List<String> tags;
     public Path dir;
     private int scoreForQuery;

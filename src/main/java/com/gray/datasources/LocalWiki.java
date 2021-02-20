@@ -5,7 +5,6 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -32,8 +31,11 @@ public class LocalWiki extends BaseSource{
      * Searches for MD files with tags similar to query with a fuzzy search
      * @param query Query String
      * @param maxResults Maximum amount of results that can be returned
+     * @return
      */
-    public void searchFor(String query,int maxResults){
+    public MdFile[] searchFor(String query, int maxResults){
+//        Arbitrary value for now, may need to be adjusted.
+        final int cutOffScore = 50;
         for (MdFile f : this.mdFiles){
 //            Get score of highest matching tag with current query for each file
             f.setScoreForQuery(
@@ -44,6 +46,22 @@ public class LocalWiki extends BaseSource{
         Arrays.sort(scoreSort,
                 Comparator.comparingInt(MdFile::getScoreForQuery));
         System.out.println(scoreSort);
+
+//         Get results to be returned
+        List<MdFile> scoresOutput = new ArrayList<MdFile>();
+        int i = scoreSort.length - 1;
+        while (scoresOutput.size() < maxResults){
+            if (scoreSort[i].getScoreForQuery() > 50){
+                scoresOutput.add(scoreSort[i]);
+            }
+            else{
+//                None of the remaining MdFiles will have a high enough score
+                break;
+            }
+            i = i-1;
+        }
+        return (scoresOutput.toArray(new MdFile[0]));
+
     }
 
     /**
