@@ -1,1 +1,1 @@
-# fnder
+# fnder [![Build Status](https://api.travis-ci.com/TomJamesGray/fnder.svg?branch=main)](https://travis-ci.com/TomJamesGray/fnder)
