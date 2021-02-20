@@ -17,7 +17,8 @@ public class LocalWiki extends BaseSource{
 
     public LocalWiki() throws IOException {
 //        Find all MD files in data directory
-        final Path dataDir = Paths.get("/tmp/data");
+//        TODO Make this a CLI argument
+        final Path dataDir = Paths.get(System.getProperty("user.dir"),"personal-wiki-data");
         Path[] mdFilesPaths = findMdFiles(dataDir).toArray(new Path[0]);
 
         this.mdFiles = new MdFile[mdFilesPaths.length];
