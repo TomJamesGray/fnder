@@ -16,8 +16,9 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.Scanner;
 
-public class App extends Application
-{
+public class App extends Application {
+    private SearchController searchController;
+    private BaseSource[] dataSources;
     /**
      * Starts server that listens for message on port to draw the GUI
      * @param port Port number to listen on
@@ -34,23 +35,16 @@ public class App extends Application
             socket.close();
         }
     }
+    private void initialiseDataSources() throws IOException {
+        dataSources = new BaseSource[]{new LocalWiki()};
+    }
     public static void main( String[] args ) throws Exception {
-        BaseSource[] dataSources = {new LocalWiki()};
-        launch();
+        launch(args);
+    }
 
-
-/*        while(true){
-            String query = getInput("Search query: ");
-            for (BaseSource dSource : dataSources){
-                DataSourceResult[] results = dSource.searchFor(query,2);
-                System.out.println(dSource.getSourceName() + ":");
-                for (int i = 0; i < results.length; i++){
-                    System.out.println(i+1 + ") " + results[i]);
-                }
-                System.out.println();
-            }
-
-        }*/
+    public void init() throws IOException {
+        initialiseDataSources();
+        System.out.println(this.dataSources);
     }
 
     @Override
@@ -62,8 +56,8 @@ public class App extends Application
         URL xmlUrl = getClass().getResource("/searchInterface.fxml");
         loader.setLocation(xmlUrl);
         Parent root = loader.load();
-        SearchController searchController = loader.getController();
-
+        searchController = loader.getController();
+        searchController.setDataSources(dataSources);
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();

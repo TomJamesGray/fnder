@@ -13,5 +13,5 @@
             fx:id="searchRoot"
             stylesheets="style.css">
 <TextField styleClass="searchBox" fx:id="searchBox" promptText="Search..."
-onKeyPressed="#keyPressSearchBox"/>
+onKeyTyped="#keyPressSearchBox"/>
 </VBox>
