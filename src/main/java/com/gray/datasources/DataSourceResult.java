@@ -13,7 +13,7 @@ public class DataSourceResult {
         Label lbl = new Label(this.title);
         resultBox.getChildren().add(lbl);
     }
-    public void openResult(){
+    public void openResult(VBox container){
 
     }
 }

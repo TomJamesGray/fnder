@@ -33,3 +33,24 @@
 .resultsContainerActive {
     -fx-background-color: red;
 }
+.mdArea{
+    -fx-padding: 10px;
+}
+.mdArea .markdown-heading-1 .markdown-text{
+    -fx-font-size: 32px;
+}
+
+.mdArea .markdown-heading-2 .markdown-text{
+    -fx-font-size: 28px;
+}
+
+.mdArea .markdown-heading-3 .markdown-text{
+    -fx-font-size: 22px;
+}
+
+.mdArea .markdown-heading-4 .markdown-text{
+    -fx-font-size: 20px;
+}
+.mdArea .markdown-heading-5 .markdown-text{
+    -fx-font-size: 18px;
+}

@@ -1,5 +1,5 @@
 <!---
 bisection "root finding" "numerical method"
 --->
-#Bisection Method
+# Bisection Method
 ...

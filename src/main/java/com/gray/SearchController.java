@@ -111,6 +111,8 @@ public class SearchController {
                     keyEvent.consume();
                 }
                 else if (keyEvent.getCode() == KeyCode.ENTER){
+                    searchRoot.getChildren().clear();
+                    currentResults[currentHighlightedVbox].openResult(searchRoot);
                     keyEvent.consume();
                 }
             }
