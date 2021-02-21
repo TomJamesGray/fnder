@@ -15,7 +15,6 @@ public class DataSourceResult {
         VBox container = new VBox();
         container.getStyleClass().add("resultsContainer");
         Label lbl = new Label(this.title);
-        System.out.println(this.title);
         container.getChildren().add(lbl);
         return(container);
     }

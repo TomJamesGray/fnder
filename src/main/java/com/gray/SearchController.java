@@ -22,15 +22,20 @@ public class SearchController {
     public VBox resultsContainer;
     private BaseSource[] dataSources;
     private Stage stage;
-    private List<VBox> currentResultsVboxes;
+    private List<VBox> currentResultsVboxes = new ArrayList<VBox>();
     private int currentHighlightedVbox = 0;
 
     public void keyTypedSearchBox(KeyEvent keyEvent) {
+        if(keyEvent.getCharacter().equals("\r")){
+//            Don't re-run query if enter is pressed. For some reason
+//            onKeyTyped is still called even if we consume the key press
+//            in the event filter
+            return;
+        }
+
         currentResultsVboxes = new ArrayList<VBox>();
 
         resultsContainer.getChildren().clear();
-        System.out.println(searchBox.getScene().getWindow());
-        System.out.println("Do Search");
         String query = searchBox.getText() + keyEvent.getText();
         final int resHeight = 90;
         int totalResultAmount = 0;
@@ -45,7 +50,6 @@ public class SearchController {
 //                System.out.println(i+1 + ") " + results[i]);
 
             }
-            System.out.println();
         }
         stage.setHeight(totalResultAmount * resHeight + searchBox.getPrefHeight());
         if(currentResultsVboxes.size() > 0) {
@@ -58,8 +62,9 @@ public class SearchController {
         searchBox.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
+                int numOfResults = currentResultsVboxes.size();
                 if (keyEvent.getCode() == KeyCode.UP){
-                    int numOfResults = currentResultsVboxes.size();
+                    System.out.println("UP PRESSED");
                     if(numOfResults > 0){
                         if(currentHighlightedVbox - 1 >= 0){
                             System.out.println(searchBox.getCaretPosition());
@@ -76,7 +81,7 @@ public class SearchController {
                     keyEvent.consume();
                 }
                 else if (keyEvent.getCode() == KeyCode.DOWN){
-                    int numOfResults = currentResultsVboxes.size();
+                    System.out.println("DOWN PRESSED");
                     if(numOfResults > 0){
                         if(currentHighlightedVbox + 1 < numOfResults){
                             currentResultsVboxes.get(currentHighlightedVbox + 1).
@@ -89,6 +94,13 @@ public class SearchController {
                         }
                     }
 //                    Consuming key event now stops caret being moved around
+                    keyEvent.consume();
+                }
+                else if (keyEvent.getCode() == KeyCode.ENTER){
+                    System.out.println("ENTER PRESSED");
+//                    Run selected result
+//                    if(numOfResults > 0) {
+//                        keyEvent.consume();
                     keyEvent.consume();
                 }
             }
