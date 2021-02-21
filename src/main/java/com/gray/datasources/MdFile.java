@@ -2,6 +2,7 @@ package com.gray.datasources;
 
 import com.sandec.mdfx.MDFXNode;
 import com.sun.tools.jdeprscan.scan.Scan;
+import io.github.egormkn.LatexView;
 import javafx.scene.layout.VBox;
 
 import java.io.FileReader;
@@ -36,7 +37,12 @@ public class MdFile extends DataSourceResult{
                 dir.getFileName(),title);
     }
 
-    public String getMdContent() {
+    /**
+     * Retrieves the markdown content and equations in any markdown file.
+     * Equations are supported in form $$\LaTeX$$
+     * @return List of Strings, alternating between markdown and LaTeX equation
+     */
+    public String[] getMdContent() {
         String content;
         try {
             content = new String(Files.readAllBytes(dir));
@@ -44,14 +50,28 @@ public class MdFile extends DataSourceResult{
         catch (IOException e){
             content = "ERROR: Could not read in file";
         }
-        return(content);
+//        Split String between $$ tags
+        return(content.split("(?:[\\^\\$\\$]+)"));
     }
 
     public void openResult(VBox container){
-        MDFXNode mdfx = new MDFXNode(getMdContent());
-        mdfx.getStyleClass().add("mdArea");
-        container.getStylesheets().add("/com/sandec/mdfx/mdfx-default.css");
+        String[] mdContent = getMdContent();
+        for (int i=0; i<mdContent.length;i++){
+            if (i % 2 == 0){
+//                On MD section
+                MDFXNode mdfx = new MDFXNode(mdContent[i]);
+                mdfx.getStyleClass().add("mdArea");
+                container.getStylesheets().add("/com/sandec/mdfx/mdfx-default.css");
+                container.getChildren().add(mdfx);
+            }
+            else{
+//                On LaTeX equation
+                LatexView lv = new LatexView(mdContent[i]);
+//                lv.setSize(30);
+                container.getChildren().add(lv);
+                System.out.println(mdContent[i]);
+            }
+        }
 
-        container.getChildren().add(mdfx);
     }
 }
