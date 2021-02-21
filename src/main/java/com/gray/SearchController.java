@@ -2,6 +2,10 @@ package com.gray;
 
 import com.gray.datasources.BaseSource;
 import com.gray.datasources.DataSourceResult;
+import javafx.event.Event;
+import javafx.event.EventDispatchChain;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -48,36 +52,47 @@ public class SearchController {
             currentResultsVboxes.get(0).getStyleClass().add("resultsContainerActive");
         }
     }
-
-    public void keyPressedSearchBox(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.UP){
-            int numOfResults = currentResultsVboxes.size();
-            if(numOfResults > 0){
-                if(currentHighlightedVbox - 1 >= 0){
-                    currentResultsVboxes.get(currentHighlightedVbox).
-                            getStyleClass().clear();
-                    currentResultsVboxes.get(currentHighlightedVbox).
-                            getStyleClass().add("resultsContainer");
-                    currentResultsVboxes.get(currentHighlightedVbox - 1).
-                            getStyleClass().add("resultsContainerActive");
-                    currentHighlightedVbox -= 1;
+    @FXML
+    public void initialize(){
+//        Add event filter to handle selecting the desired vbox
+        searchBox.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.UP){
+                    int numOfResults = currentResultsVboxes.size();
+                    if(numOfResults > 0){
+                        if(currentHighlightedVbox - 1 >= 0){
+                            System.out.println(searchBox.getCaretPosition());
+                            currentResultsVboxes.get(currentHighlightedVbox).
+                                    getStyleClass().clear();
+                            currentResultsVboxes.get(currentHighlightedVbox).
+                                    getStyleClass().add("resultsContainer");
+                            currentResultsVboxes.get(currentHighlightedVbox - 1).
+                                    getStyleClass().add("resultsContainerActive");
+                            currentHighlightedVbox -= 1;
+                        }
+                    }
+//                    Consuming key event now stops caret being moved around
+                    keyEvent.consume();
+                }
+                else if (keyEvent.getCode() == KeyCode.DOWN){
+                    int numOfResults = currentResultsVboxes.size();
+                    if(numOfResults > 0){
+                        if(currentHighlightedVbox + 1 < numOfResults){
+                            currentResultsVboxes.get(currentHighlightedVbox + 1).
+                                    getStyleClass().add("resultsContainerActive");
+                            currentResultsVboxes.get(currentHighlightedVbox).
+                                    getStyleClass().clear();
+                            currentResultsVboxes.get(currentHighlightedVbox).
+                                    getStyleClass().add("resultsContainer");
+                            currentHighlightedVbox += 1;
+                        }
+                    }
+//                    Consuming key event now stops caret being moved around
+                    keyEvent.consume();
                 }
             }
-        }
-        else if (keyEvent.getCode() == KeyCode.DOWN){
-            int numOfResults = currentResultsVboxes.size();
-            if(numOfResults > 0){
-                if(currentHighlightedVbox + 1 < numOfResults){
-                    currentResultsVboxes.get(currentHighlightedVbox + 1).
-                            getStyleClass().add("resultsContainerActive");
-                    currentResultsVboxes.get(currentHighlightedVbox).
-                            getStyleClass().clear();
-                    currentResultsVboxes.get(currentHighlightedVbox).
-                            getStyleClass().add("resultsContainer");
-                    currentHighlightedVbox += 1;
-                }
-            }
-        }
+        });
     }
 
     public BaseSource[] getDataSources() {
@@ -96,6 +111,4 @@ public class SearchController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-
-
 }
