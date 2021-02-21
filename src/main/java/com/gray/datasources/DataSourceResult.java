@@ -5,17 +5,15 @@ import javafx.scene.layout.VBox;
 
 public class DataSourceResult {
     public String title;
+    public VBox resultBox;
     public DataSourceResult(String title){
         this.title = title;
+        this.resultBox = new VBox();
+        resultBox.getStyleClass().add("resultsContainer");
+        Label lbl = new Label(this.title);
+        resultBox.getChildren().add(lbl);
     }
     public void openResult(){
 
-    }
-    public VBox genResultBox(){
-        VBox container = new VBox();
-        container.getStyleClass().add("resultsContainer");
-        Label lbl = new Label(this.title);
-        container.getChildren().add(lbl);
-        return(container);
     }
 }

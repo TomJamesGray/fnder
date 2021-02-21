@@ -13,6 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +23,15 @@ public class SearchController {
     public VBox resultsContainer;
     private BaseSource[] dataSources;
     private Stage stage;
-    private List<VBox> currentResultsVboxes = new ArrayList<VBox>();
+    private DataSourceResult[] currentResults = new DataSourceResult[0];
     private int currentHighlightedVbox = 0;
 
+    /**
+     * Handles key press in the search box. Runs searches for
+     * all data sources for every key press and then
+     * draws the results to the stage
+     * @param keyEvent
+     */
     public void keyTypedSearchBox(KeyEvent keyEvent) {
         if(keyEvent.getCharacter().equals("\r")){
 //            Don't re-run query if enter is pressed. For some reason
@@ -33,46 +40,54 @@ public class SearchController {
             return;
         }
 
-        currentResultsVboxes = new ArrayList<VBox>();
 
         resultsContainer.getChildren().clear();
         String query = searchBox.getText() + keyEvent.getText();
         final int resHeight = 90;
         int totalResultAmount = 0;
         for (BaseSource dSource : dataSources){
-            DataSourceResult[] results = dSource.searchFor(query,2);
+            currentResults = dSource.searchFor(query,2);
 
-            totalResultAmount += results.length;
-            for (int i = 0; i < results.length; i++){
-                VBox resVbox = results[i].genResultBox();
-                currentResultsVboxes.add(resVbox);
+            totalResultAmount += currentResults.length;
+            for (int i = 0; i < currentResults.length; i++){
+                VBox resVbox = currentResults[i].resultBox;
                 resultsContainer.getChildren().add(resVbox);
 //                System.out.println(i+1 + ") " + results[i]);
 
             }
         }
         stage.setHeight(totalResultAmount * resHeight + searchBox.getPrefHeight());
-        if(currentResultsVboxes.size() > 0) {
-            currentResultsVboxes.get(0).getStyleClass().add("resultsContainerActive");
+        if(currentResults.length > 0) {
+            currentResults[0].resultBox.getStyleClass().add("resultsContainerActive");
+            for(int i = 1;i < currentResults.length; i++){
+//                Clear all other result boxes
+                currentResults[i].resultBox.getStyleClass().clear();
+                currentResults[i].resultBox.getStyleClass().add("resultsContainer");
+            }
+            currentHighlightedVbox = 0;
         }
     }
+
+    /**
+     * Called just after the FXML file is loaded and drawn. Adds
+     * an event filter to the search box to handle, up, down and enter keys
+     */
     @FXML
     public void initialize(){
 //        Add event filter to handle selecting the desired vbox
         searchBox.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                int numOfResults = currentResultsVboxes.size();
+                int numOfResults = currentResults.length;
                 if (keyEvent.getCode() == KeyCode.UP){
-                    System.out.println("UP PRESSED");
                     if(numOfResults > 0){
                         if(currentHighlightedVbox - 1 >= 0){
                             System.out.println(searchBox.getCaretPosition());
-                            currentResultsVboxes.get(currentHighlightedVbox).
+                            currentResults[currentHighlightedVbox].resultBox.
                                     getStyleClass().clear();
-                            currentResultsVboxes.get(currentHighlightedVbox).
+                            currentResults[currentHighlightedVbox].resultBox.
                                     getStyleClass().add("resultsContainer");
-                            currentResultsVboxes.get(currentHighlightedVbox - 1).
+                            currentResults[currentHighlightedVbox - 1].resultBox.
                                     getStyleClass().add("resultsContainerActive");
                             currentHighlightedVbox -= 1;
                         }
@@ -81,14 +96,13 @@ public class SearchController {
                     keyEvent.consume();
                 }
                 else if (keyEvent.getCode() == KeyCode.DOWN){
-                    System.out.println("DOWN PRESSED");
                     if(numOfResults > 0){
                         if(currentHighlightedVbox + 1 < numOfResults){
-                            currentResultsVboxes.get(currentHighlightedVbox + 1).
+                            currentResults[currentHighlightedVbox + 1].resultBox.
                                     getStyleClass().add("resultsContainerActive");
-                            currentResultsVboxes.get(currentHighlightedVbox).
+                            currentResults[currentHighlightedVbox].resultBox.
                                     getStyleClass().clear();
-                            currentResultsVboxes.get(currentHighlightedVbox).
+                            currentResults[currentHighlightedVbox].resultBox.
                                     getStyleClass().add("resultsContainer");
                             currentHighlightedVbox += 1;
                         }
@@ -97,10 +111,6 @@ public class SearchController {
                     keyEvent.consume();
                 }
                 else if (keyEvent.getCode() == KeyCode.ENTER){
-                    System.out.println("ENTER PRESSED");
-//                    Run selected result
-//                    if(numOfResults > 0) {
-//                        keyEvent.consume();
                     keyEvent.consume();
                 }
             }
