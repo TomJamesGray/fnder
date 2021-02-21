@@ -9,10 +9,10 @@
 <VBox xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.gray.SearchController"
-            prefHeight="200.0" prefWidth="700.0"
+            prefHeight="100.0" prefWidth="700.0"
             fx:id="searchRoot"
             stylesheets="style.css">
     <TextField styleClass="searchBox" fx:id="searchBox" promptText="Search..."
-        onKeyTyped="#keyPressSearchBox"/>
+        onKeyTyped="#keyTypedSearchBox" onKeyPressed="#keyPressedSearchBox"/>
     <VBox styleClass="resultsContainer" fx:id="resultsContainer"/>
 </VBox>

@@ -13,8 +13,7 @@ public class DataSourceResult {
     }
     public VBox genResultBox(){
         VBox container = new VBox();
-        container.setStyle("width:100%");
-        container.setStyle("height:50px");
+        container.getStyleClass().add("resultsContainer");
         Label lbl = new Label(this.title);
         System.out.println(this.title);
         container.getChildren().add(lbl);
