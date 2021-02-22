@@ -1,16 +1,21 @@
 package com.gray.datasources;
 
 import com.sandec.mdfx.MDFXNode;
-import com.sun.tools.jdeprscan.scan.Scan;
-import io.github.egormkn.LatexView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
+import org.scilab.forge.jlatexmath.*;
 
-import java.io.FileReader;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Scanner;
+
+
 
 public class MdFile extends DataSourceResult{
     public List<String> tags;
@@ -54,8 +59,25 @@ public class MdFile extends DataSourceResult{
         return(content.split("(?:[\\^\\$\\$]+)"));
     }
 
+    private static Image convertToFxImage(BufferedImage image) {
+        WritableImage wr = null;
+        if (image != null) {
+            wr = new WritableImage(image.getWidth(), image.getHeight());
+            PixelWriter pw = wr.getPixelWriter();
+            for (int x = 0; x < image.getWidth(); x++) {
+                for (int y = 0; y < image.getHeight(); y++) {
+                    pw.setArgb(x, y, image.getRGB(x, y));
+                }
+            }
+        }
+
+        return new ImageView(wr).getImage();
+    }
+
+
     public void openResult(VBox container){
         String[] mdContent = getMdContent();
+
         for (int i=0; i<mdContent.length;i++){
             if (i % 2 == 0){
 //                On MD section
@@ -65,11 +87,15 @@ public class MdFile extends DataSourceResult{
                 container.getChildren().add(mdfx);
             }
             else{
-//                On LaTeX equation
-                LatexView lv = new LatexView(mdContent[i]);
-//                lv.setSize(30);
-                container.getChildren().add(lv);
-                System.out.println(mdContent[i]);
+                TeXFormula formula = new TeXFormula(mdContent[i]);
+                BufferedImage imgB = (BufferedImage) formula.createBufferedImage(TeXConstants.STYLE_DISPLAY,
+                        25, new Color(0,0,0),
+                        new Color(255,255,255));
+                Image img = convertToFxImage(imgB);
+
+                ImageView selectedImage = new ImageView();
+                selectedImage.setImage(img);
+                container.getChildren().add(selectedImage);
             }
         }
 

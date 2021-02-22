@@ -35,9 +35,9 @@
           <version>11.0.1</version>
       </dependency>
       <dependency>
-          <groupId>io.github.egormkn</groupId>
-          <artifactId>latexview</artifactId>
-          <version>0.6.0</version>
+          <groupId>org.scilab.forge</groupId>
+          <artifactId>jlatexmath</artifactId>
+          <version>1.0.7</version>
       </dependency>
       <dependency>
           <groupId>com.sandec</groupId>
