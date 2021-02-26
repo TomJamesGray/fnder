@@ -1,10 +1,12 @@
 package com.gray.datasources;
 
 import com.sandec.mdfx.MDFXNode;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.scilab.forge.jlatexmath.*;
 
@@ -97,6 +99,7 @@ public class MdFile extends DataSourceResult{
 
     public void openResult(VBox container){
         String[] mdContent = getMdContent();
+        VBox scrollContainer = new VBox();
 
         for (int i=0; i<mdContent.length;i++){
             if (i % 2 == 0){
@@ -106,7 +109,7 @@ public class MdFile extends DataSourceResult{
 //                Get rid of main mdfx stylesheet
 //                mdfx.getStylesheets().clear();
                 mdfx.getStylesheets().add("/com/sandec/mdfx/mdfx-default.css");
-                container.getChildren().add(mdfx);
+                scrollContainer.getChildren().add(mdfx);
             }
             else{
                 TeXFormula formula = new TeXFormula(mdContent[i]);
@@ -119,9 +122,13 @@ public class MdFile extends DataSourceResult{
 
                 ImageView selectedImage = new ImageView();
                 selectedImage.setImage(img);
-                container.getChildren().add(selectedImage);
+                scrollContainer.getChildren().add(selectedImage);
             }
         }
+        ScrollPane sp = new ScrollPane();
+        sp.setContent(scrollContainer);
+        container.getChildren().add(sp);
+
 
     }
 }

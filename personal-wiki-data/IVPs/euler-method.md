@@ -9,3 +9,27 @@ $$
 y(x_{n+1}) = y(x_n) + hf(x_n,y_n)
 $$
 Lorem ipsum
+Explicit numeric one step method to solve an IVP
+
+$$
+y(x_{n+1}) = y(x_n) + hf(x_n,y_n)
+$$
+Lorem ipsum
+Explicit numeric one step method to solve an IVP
+
+$$
+y(x_{n+1}) = y(x_n) + hf(x_n,y_n)
+$$
+Lorem ipsum
+Explicit numeric one step method to solve an IVP
+
+$$
+y(x_{n+1}) = y(x_n) + hf(x_n,y_n)
+$$
+Lorem ipsum
+Explicit numeric one step method to solve an IVP
+
+$$
+y(x_{n+1}) = y(x_n) + hf(x_n,y_n)
+$$
+Lorem ipsum
