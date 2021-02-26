@@ -37,7 +37,12 @@
 .mdArea{
     -fx-padding: 10px;
 }
-
+.resultsScrollPane{
+    -fx-background-color: -search-bar-bg;
+}
+.resultsScrollPane > * {
+    -fx-background-color: -search-bar-bg;
+}
 /*Set our own font sizes for markdown text*/
 .mdArea .markdown-heading-1 .markdown-text{
     -fx-font-size: 32px;

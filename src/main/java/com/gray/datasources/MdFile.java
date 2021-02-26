@@ -126,7 +126,10 @@ public class MdFile extends DataSourceResult{
             }
         }
         ScrollPane sp = new ScrollPane();
+        sp.getStyleClass().add("resultsScrollPane");
         sp.setContent(scrollContainer);
+        sp.setFitToHeight(true);
+        sp.setFitToWidth(true);
         container.getChildren().add(sp);
 
 
