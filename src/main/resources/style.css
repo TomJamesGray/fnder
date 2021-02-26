@@ -1,5 +1,6 @@
 *{
-    -search-bar-bg:#DCDCDC;
+    /*-search-bar-bg:#DCDCDC;*/
+    -search-bar-bg:rgb(220,220,220);
 }
 
 #searchRoot{
@@ -36,8 +37,11 @@
 .mdArea{
     -fx-padding: 10px;
 }
+
+/*Set our own font sizes for markdown text*/
 .mdArea .markdown-heading-1 .markdown-text{
     -fx-font-size: 32px;
+    -fx-padding: 100 !important;
 }
 
 .mdArea .markdown-heading-2 .markdown-text{

@@ -95,6 +95,10 @@ public class LocalWiki implements BaseSource{
 //                Next line contains title
                 if(fScanner.hasNext()) {
                     title = fScanner.nextLine().replace("#", "");
+                    if (title.startsWith(" ")){
+//                        Remove leading space
+                        title = title.substring(1);
+                    }
                     System.out.println("Title " + title);
                     fScanner.close();
                     fScannerClosed = true;

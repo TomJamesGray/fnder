@@ -2,6 +2,7 @@
 odes "numerical methods" ivp "explicit method" "euler method"
 --->
 # Euler Method
+
 Explicit numeric one step method to solve an IVP
 
 $$

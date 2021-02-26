@@ -10,11 +10,13 @@ import org.scilab.forge.jlatexmath.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
+import java.util.Scanner;
 
 
 public class MdFile extends DataSourceResult{
@@ -50,7 +52,25 @@ public class MdFile extends DataSourceResult{
     public String[] getMdContent() {
         String content;
         try {
-            content = new String(Files.readAllBytes(dir));
+            Scanner fScanner = new Scanner(new FileReader(dir.toString()));
+            StringBuilder contentBuilder = new StringBuilder();
+            boolean inComment = false;
+            while (fScanner.hasNext()){
+                String nL = fScanner.nextLine();
+                if (nL.startsWith("<!---")){
+//                    In a comment
+                    inComment = true;
+                }
+                else if (nL.startsWith("--->") & inComment){
+                    inComment = false;
+                }
+                else if (!inComment){
+                    contentBuilder.append(nL);
+                    contentBuilder.append(System.lineSeparator());
+                }
+            }
+            fScanner.close();
+            content = contentBuilder.toString();
         }
         catch (IOException e){
             content = "ERROR: Could not read in file";
@@ -83,14 +103,18 @@ public class MdFile extends DataSourceResult{
 //                On MD section
                 MDFXNode mdfx = new MDFXNode(mdContent[i]);
                 mdfx.getStyleClass().add("mdArea");
-                container.getStylesheets().add("/com/sandec/mdfx/mdfx-default.css");
+//                Get rid of main mdfx stylesheet
+//                mdfx.getStylesheets().clear();
+                mdfx.getStylesheets().add("/com/sandec/mdfx/mdfx-default.css");
                 container.getChildren().add(mdfx);
             }
             else{
                 TeXFormula formula = new TeXFormula(mdContent[i]);
+//                TODO Make img background somehow use "-search-bar-bg" from stylesheet
+//                Or make it transparent
                 BufferedImage imgB = (BufferedImage) formula.createBufferedImage(TeXConstants.STYLE_DISPLAY,
                         25, new Color(0,0,0),
-                        new Color(255,255,255));
+                        new Color(220,220,220));
                 Image img = convertToFxImage(imgB);
 
                 ImageView selectedImage = new ImageView();
