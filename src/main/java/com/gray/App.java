@@ -1,6 +1,7 @@
 package com.gray;
 
 import com.gray.datasources.BaseSource;
+import com.gray.datasources.GithubRepos;
 import com.gray.datasources.LocalWiki;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -39,7 +40,7 @@ public class App extends Application {
         }
     }
     private void initialiseDataSources() throws IOException {
-        dataSources = new BaseSource[]{new LocalWiki()};
+        dataSources = new BaseSource[]{new LocalWiki(), new GithubRepos()};
     }
     public static void main( String[] args ) throws Exception {
         launch();
