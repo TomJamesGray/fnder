@@ -65,6 +65,7 @@ public class GithubRepos implements BaseSource{
         int i = scores.length - 1;
         while(scoresOutput.size() < maxResults){
             scoresOutput.add(repos[scores[i][0]]);
+            i -= 1;
         }
         return (scoresOutput.toArray(new URLResult[0]));
 //        return scores;
