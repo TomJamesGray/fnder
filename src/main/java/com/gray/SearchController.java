@@ -47,7 +47,7 @@ public class SearchController {
         final int resHeight = 90;
         final int maxResults = 2;
         int totalResultAmount = 0;
-
+        currentResults = new ArrayList<DataSourceResult>();
         for (BaseSource dSource : dataSources){
             DataSourceResult[] resultsForDSource = dSource.searchFor(query,maxResults);
 

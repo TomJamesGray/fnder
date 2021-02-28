@@ -60,11 +60,16 @@ public class GithubRepos implements BaseSource{
         }
 //        Sort on the search score
         Arrays.sort(scores, (a,b) -> Integer.compare(a[1],b[1]));
-        System.out.println(scores);
         List<URLResult> scoresOutput = new ArrayList<URLResult>();
         int i = scores.length - 1;
+        final int minScore = 50;
         while(scoresOutput.size() < maxResults){
-            scoresOutput.add(repos[scores[i][0]]);
+            if (scores[i][1] > minScore) {
+                scoresOutput.add(repos[scores[i][0]]);
+            }
+            else{
+                break;
+            }
             i -= 1;
         }
         return (scoresOutput.toArray(new URLResult[0]));
