@@ -13,6 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javax.sql.DataSource;
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class SearchController {
     public VBox resultsContainer;
     private BaseSource[] dataSources;
     private Stage stage;
-    private DataSourceResult[] currentResults = new DataSourceResult[0];
+    private List<DataSourceResult> currentResults = new ArrayList<DataSourceResult>();
     private int currentHighlightedVbox = 0;
 
     /**
@@ -44,25 +45,27 @@ public class SearchController {
         resultsContainer.getChildren().clear();
         String query = searchBox.getText() + keyEvent.getText();
         final int resHeight = 90;
+        final int maxResults = 2;
         int totalResultAmount = 0;
+
         for (BaseSource dSource : dataSources){
-            currentResults = dSource.searchFor(query,2);
+            DataSourceResult[] resultsForDSource = dSource.searchFor(query,maxResults);
 
-            totalResultAmount += currentResults.length;
-            for (int i = 0; i < currentResults.length; i++){
-                VBox resVbox = currentResults[i].resultBox;
+            totalResultAmount += resultsForDSource.length;
+            for (int i = 0; i < resultsForDSource.length; i++){
+                VBox resVbox = resultsForDSource[i].resultBox;
                 resultsContainer.getChildren().add(resVbox);
-//                System.out.println(i+1 + ") " + results[i]);
-
+//                Add onto currentResults list so we can access it later
+                currentResults.add(resultsForDSource[i]);
             }
         }
         stage.setHeight(totalResultAmount * resHeight + searchBox.getPrefHeight());
-        if(currentResults.length > 0) {
-            currentResults[0].resultBox.getStyleClass().add("resultsContainerActive");
-            for(int i = 1;i < currentResults.length; i++){
+        if(currentResults.size() > 0) {
+            currentResults.get(0).resultBox.getStyleClass().add("resultsContainerActive");
+            for(int i = 1;i < currentResults.size(); i++){
 //                Clear all other result boxes
-                currentResults[i].resultBox.getStyleClass().clear();
-                currentResults[i].resultBox.getStyleClass().add("resultsContainer");
+                currentResults.get(i).resultBox.getStyleClass().clear();
+                currentResults.get(i).resultBox.getStyleClass().add("resultsContainer");
             }
             currentHighlightedVbox = 0;
         }
@@ -78,16 +81,16 @@ public class SearchController {
         searchBox.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                int numOfResults = currentResults.length;
+                int numOfResults = currentResults.size();
                 if (keyEvent.getCode() == KeyCode.UP){
                     if(numOfResults > 0){
                         if(currentHighlightedVbox - 1 >= 0){
                             System.out.println(searchBox.getCaretPosition());
-                            currentResults[currentHighlightedVbox].resultBox.
+                            currentResults.get(currentHighlightedVbox).resultBox.
                                     getStyleClass().clear();
-                            currentResults[currentHighlightedVbox].resultBox.
+                            currentResults.get(currentHighlightedVbox).resultBox.
                                     getStyleClass().add("resultsContainer");
-                            currentResults[currentHighlightedVbox - 1].resultBox.
+                            currentResults.get(currentHighlightedVbox - 1).resultBox.
                                     getStyleClass().add("resultsContainerActive");
                             currentHighlightedVbox -= 1;
                         }
@@ -98,11 +101,11 @@ public class SearchController {
                 else if (keyEvent.getCode() == KeyCode.DOWN){
                     if(numOfResults > 0){
                         if(currentHighlightedVbox + 1 < numOfResults){
-                            currentResults[currentHighlightedVbox + 1].resultBox.
+                            currentResults.get(currentHighlightedVbox + 1).resultBox.
                                     getStyleClass().add("resultsContainerActive");
-                            currentResults[currentHighlightedVbox].resultBox.
+                            currentResults.get(currentHighlightedVbox).resultBox.
                                     getStyleClass().clear();
-                            currentResults[currentHighlightedVbox].resultBox.
+                            currentResults.get(currentHighlightedVbox).resultBox.
                                     getStyleClass().add("resultsContainer");
                             currentHighlightedVbox += 1;
                         }
@@ -112,7 +115,7 @@ public class SearchController {
                 }
                 else if (keyEvent.getCode() == KeyCode.ENTER){
                     searchRoot.getChildren().clear();
-                    currentResults[currentHighlightedVbox].openResult(searchRoot);
+                    currentResults.get(currentHighlightedVbox).openResult(searchRoot);
                     keyEvent.consume();
                 }
             }
