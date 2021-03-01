@@ -3,8 +3,9 @@ package com.gray.datasources;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public class URLResult extends DataSourceResult {
+public class URLResult extends DataSourceResult implements Serializable {
     public String url;
     public URLResult(String title, String url) {
         super(title);

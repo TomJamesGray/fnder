@@ -3,11 +3,9 @@ package com.gray;
 import com.gray.datasources.BaseSource;
 import com.gray.datasources.GithubRepos;
 import com.gray.datasources.LocalWiki;
+import com.gray.datasources.URLResult;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -25,13 +23,14 @@ public class Server {
         ServerSocket server = new ServerSocket(serverPort);
         while(true){
             Socket socket = server.accept();
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println("Accepted conn");
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            String msg = in.readLine();
-            System.out.println(msg);
-            if (msg.startsWith("search:")){
-                System.out.println("search for " + msg);
-            }
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            String inputStr = (String)in.readUTF();
+
+            System.out.println(inputStr);
+//            out.println("hello from server");
+            out.writeObject(new URLResult("test","http://www.google.com"));
             in.close();
             socket.close();
         }

@@ -2,6 +2,7 @@ package com.gray.frontend;
 
 import com.gray.datasources.BaseSource;
 import com.gray.datasources.DataSourceResult;
+import com.gray.datasources.URLResult;
 import javafx.event.Event;
 import javafx.event.EventDispatchChain;
 import javafx.event.EventHandler;
@@ -15,9 +16,7 @@ import javafx.stage.Stage;
 
 import javax.sql.DataSource;
 import javax.xml.crypto.Data;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -53,6 +52,7 @@ public class SearchController {
         resultsContainer.getChildren().clear();
         String query = searchBox.getText() + keyEvent.getText();
         Object out = sendSearchQuery(query);
+
         final int resHeight = 90;
         final int maxResults = 2;
         int totalResultAmount = 0;
@@ -144,25 +144,26 @@ public class SearchController {
      */
     private void initConnection(){
         try {
-            socket = new Socket("127.0.0.1",socketPort);
-            socketOut = new PrintWriter(socket.getOutputStream());
+            socket = new Socket("localhost",socketPort);
             socketIn = new ObjectInputStream(socket.getInputStream());
-        } catch (IOException e) {
+            DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
+            dout.writeUTF("Hello world");
+
+            Object x = socketIn.readObject();
+            dout.flush();
+            dout.close();
+            socket.close();
+//            socketOut = new PrintWriter(socket.getOutputStream());
+//            socketOut.println("hello world from client");
+//            socketIn.close();
+//            socketOut.close();
+//            socket.close();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     private Object sendSearchQuery(String msg){
-        socketOut.println("search:" + msg);
-//        TODO sort out all try catches properly
-        try {
-            Object out = socketIn.readObject();
-            return(out);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
         return new Object();
     }
 

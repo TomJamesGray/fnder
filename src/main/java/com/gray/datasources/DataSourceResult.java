@@ -3,11 +3,14 @@ package com.gray.datasources;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-public class DataSourceResult {
+import java.io.Serializable;
+
+public class DataSourceResult extends RootDataSourceResult implements Serializable {
     public String title;
     private VBox resultBox;
     public static final boolean writesToGui = false;
     public DataSourceResult(String title){
+        super();
         this.title = title;
     }
     public void openResult(VBox container){
