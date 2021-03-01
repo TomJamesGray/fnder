@@ -15,6 +15,11 @@ import javafx.stage.Stage;
 
 import javax.sql.DataSource;
 import javax.xml.crypto.Data;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +31,11 @@ public class SearchController {
     private Stage stage;
     private List<DataSourceResult> currentResults = new ArrayList<DataSourceResult>();
     private int currentHighlightedVbox = 0;
+
+    private Socket socket;
+    private ObjectInputStream socketIn;
+    private PrintWriter socketOut;
+    public static final int socketPort = 6000;
 
     /**
      * Handles key press in the search box. Runs searches for
@@ -40,10 +50,9 @@ public class SearchController {
 //            in the event filter
             return;
         }
-
-
         resultsContainer.getChildren().clear();
         String query = searchBox.getText() + keyEvent.getText();
+        Object out = sendSearchQuery(query);
         final int resHeight = 90;
         final int maxResults = 2;
         int totalResultAmount = 0;
@@ -127,6 +136,34 @@ public class SearchController {
                 }
             }
         });
+        initConnection();
+    }
+
+    /**
+     * Starts connection to server
+     */
+    private void initConnection(){
+        try {
+            socket = new Socket("127.0.0.1",socketPort);
+            socketOut = new PrintWriter(socket.getOutputStream());
+            socketIn = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Object sendSearchQuery(String msg){
+        socketOut.println("search:" + msg);
+//        TODO sort out all try catches properly
+        try {
+            Object out = socketIn.readObject();
+            return(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new Object();
     }
 
     public BaseSource[] getDataSources() {
