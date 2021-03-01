@@ -34,6 +34,9 @@
 .resultsContainerActive {
     -fx-background-color: red;
 }
+.dSourceLabel{
+    -fx-text-fill: #69BAFF;
+}
 .mdArea{
     -fx-padding: 10px;
 }

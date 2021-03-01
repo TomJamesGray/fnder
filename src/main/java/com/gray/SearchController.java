@@ -51,6 +51,13 @@ public class SearchController {
         for (BaseSource dSource : dataSources){
             DataSourceResult[] resultsForDSource = dSource.searchFor(query,maxResults);
 
+            if(resultsForDSource.length > 0){
+//                Add label describing the data source
+                Label dSourceLabel = new Label(dSource.getSourceName());
+                dSourceLabel.getStyleClass().add("dSourceLabel");
+                resultsContainer.getChildren().add(dSourceLabel);
+            }
+
             totalResultAmount += resultsForDSource.length;
             for (int i = 0; i < resultsForDSource.length; i++){
                 VBox resVbox = resultsForDSource[i].resultBox;
