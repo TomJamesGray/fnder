@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Scanner;
 
 
-public class MdFile extends DataSourceResult{
+public class MdFile extends GuiDataSourceResult{
     public List<String> tags;
     public Path dir;
     private int scoreForQuery;
@@ -97,7 +97,7 @@ public class MdFile extends DataSourceResult{
     }
 
 
-    public void openResult(VBox container){
+    public VBox genVboxResult(VBox container){
         String[] mdContent = getMdContent();
         VBox scrollContainer = new VBox();
 
@@ -130,8 +130,8 @@ public class MdFile extends DataSourceResult{
         sp.setContent(scrollContainer);
         sp.setFitToHeight(true);
         sp.setFitToWidth(true);
-        container.getChildren().add(sp);
-
-
+        VBox spCont = new VBox();
+        spCont.getChildren().add(sp);
+        return spCont;
     }
 }

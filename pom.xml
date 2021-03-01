@@ -110,14 +110,25 @@
           <version>3.0.0</version>
             <executions>
                 <execution>
+                    <id>server</id>
                     <goals>
                         <goal>java</goal>
                     </goals>
+                    <configuration>
+                        <mainClass>com.gray.Server</mainClass>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>client</id>
+                    <goals>
+                        <goal>java</goal>
+                    </goals>
+                    <configuration>
+                        <mainClass>com.gray.frontend.App</mainClass>
+                    </configuration>
                 </execution>
             </executions>
-          <configuration>
-              <mainClass>com.gray.App</mainClass>
-          </configuration>
+
       </plugin>
       </plugins>
     </pluginManagement>
