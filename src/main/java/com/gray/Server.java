@@ -1,9 +1,6 @@
 package com.gray;
 
-import com.gray.datasources.BaseSource;
-import com.gray.datasources.GithubRepos;
-import com.gray.datasources.LocalWiki;
-import com.gray.datasources.URLResult;
+import com.gray.datasources.*;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -26,11 +23,18 @@ public class Server {
             System.out.println("Accepted conn");
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream(socket.getInputStream());
-            String inputStr = (String)in.readUTF();
 
-            System.out.println(inputStr);
-//            out.println("hello from server");
-            out.writeObject(new URLResult("test","http://www.google.com"));
+            String searchQuery = (String)in.readUTF();
+
+            System.out.println(searchQuery);
+            ServerResultList[] outputs = new ServerResultList[dataSources.length];
+            for (int i = 0; i < dataSources.length; i++){
+                DataSourceResult[] dSourceResults = dataSources[i].searchFor(searchQuery,2);
+                outputs[i] = new ServerResultList();
+                outputs[i].setdSourceTitle(dataSources[i].getSourceName());
+                outputs[i].setResults(dSourceResults);
+            }
+            out.writeObject(outputs);
             in.close();
             socket.close();
         }

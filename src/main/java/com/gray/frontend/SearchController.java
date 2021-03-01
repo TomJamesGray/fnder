@@ -2,6 +2,7 @@ package com.gray.frontend;
 
 import com.gray.datasources.BaseSource;
 import com.gray.datasources.DataSourceResult;
+import com.gray.datasources.ServerResultList;
 import com.gray.datasources.URLResult;
 import javafx.event.Event;
 import javafx.event.EventDispatchChain;
@@ -33,7 +34,7 @@ public class SearchController {
 
     private Socket socket;
     private ObjectInputStream socketIn;
-    private PrintWriter socketOut;
+    private DataOutputStream socketOut;
     public static final int socketPort = 6000;
 
     /**
@@ -51,7 +52,13 @@ public class SearchController {
         }
         resultsContainer.getChildren().clear();
         String query = searchBox.getText() + keyEvent.getText();
-        Object out = sendSearchQuery(query);
+        Object out;
+        try {
+            out = sendSearchQuery(query);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
 
         final int resHeight = 90;
         final int maxResults = 2;
@@ -136,7 +143,7 @@ public class SearchController {
                 }
             }
         });
-        initConnection();
+//        initConnection();
     }
 
     /**
@@ -146,25 +153,27 @@ public class SearchController {
         try {
             socket = new Socket("localhost",socketPort);
             socketIn = new ObjectInputStream(socket.getInputStream());
-            DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
-            dout.writeUTF("Hello world");
-
-            Object x = socketIn.readObject();
-            dout.flush();
-            dout.close();
+            socketOut = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void closeConnection(){
+        try{
             socket.close();
-//            socketOut = new PrintWriter(socket.getOutputStream());
-//            socketOut.println("hello world from client");
-//            socketIn.close();
-//            socketOut.close();
-//            socket.close();
-        } catch (IOException | ClassNotFoundException e) {
+            socketIn.close();
+            socketOut.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private Object sendSearchQuery(String msg){
-        return new Object();
+    private Object sendSearchQuery(String msg) throws IOException, ClassNotFoundException {
+        initConnection();
+        socketOut.writeUTF(msg);
+        Object reply = socketIn.readObject();
+        closeConnection();
+        return (reply);
     }
 
     public BaseSource[] getDataSources() {
