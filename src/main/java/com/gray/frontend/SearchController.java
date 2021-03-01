@@ -27,7 +27,6 @@ public class SearchController {
     public TextField searchBox;
     public VBox searchRoot;
     public VBox resultsContainer;
-    private BaseSource[] dataSources;
     private Stage stage;
     private List<DataSourceResult> currentResults = new ArrayList<DataSourceResult>();
     private int currentHighlightedVbox = 0;
@@ -52,9 +51,9 @@ public class SearchController {
         }
         resultsContainer.getChildren().clear();
         String query = searchBox.getText() + keyEvent.getText();
-        Object out;
+        ServerResultList[] searchResults;
         try {
-            out = sendSearchQuery(query);
+            searchResults = sendSearchQuery(query);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return;
@@ -64,22 +63,20 @@ public class SearchController {
         final int maxResults = 2;
         int totalResultAmount = 0;
         currentResults = new ArrayList<DataSourceResult>();
-        for (BaseSource dSource : dataSources){
-            DataSourceResult[] resultsForDSource = dSource.searchFor(query,maxResults);
-
-            if(resultsForDSource.length > 0){
+        for (ServerResultList resultsForDSource : searchResults){
+            if(resultsForDSource.getResults().length > 0){
 //                Add label describing the data source
-                Label dSourceLabel = new Label(dSource.getSourceName());
+                Label dSourceLabel = new Label(resultsForDSource.getdSourceTitle());
                 dSourceLabel.getStyleClass().add("dSourceLabel");
                 resultsContainer.getChildren().add(dSourceLabel);
             }
 
-            totalResultAmount += resultsForDSource.length;
-            for (int i = 0; i < resultsForDSource.length; i++){
-                VBox resVbox = resultsForDSource[i].getResultBox();
+            totalResultAmount += resultsForDSource.getResults().length;
+            for (int i = 0; i < resultsForDSource.getResults().length; i++){
+                VBox resVbox = resultsForDSource.getResults()[i].getResultBox();
                 resultsContainer.getChildren().add(resVbox);
 //                Add onto currentResults list so we can access it later
-                currentResults.add(resultsForDSource[i]);
+                currentResults.add(resultsForDSource.getResults()[i]);
             }
         }
         stage.setHeight(totalResultAmount * resHeight + searchBox.getPrefHeight());
@@ -168,20 +165,18 @@ public class SearchController {
         }
     }
 
-    private Object sendSearchQuery(String msg) throws IOException, ClassNotFoundException {
+    private ServerResultList[] sendSearchQuery(String msg) throws IOException, ClassNotFoundException {
         initConnection();
         socketOut.writeUTF(msg);
         Object reply = socketIn.readObject();
         closeConnection();
-        return (reply);
-    }
+        if(reply instanceof ServerResultList[]){
+            return (ServerResultList[]) reply;
+        }
+        else{
+            throw new IOException("Response from server is not a ServerResultList");
+        }
 
-    public BaseSource[] getDataSources() {
-        return dataSources;
-    }
-
-    public void setDataSources(BaseSource[] dataSources) {
-        this.dataSources = dataSources;
     }
 
 

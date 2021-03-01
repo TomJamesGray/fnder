@@ -19,16 +19,8 @@ public class App extends Application {
     public final boolean background = false;
     public final int serverPort = 6000;
 
-    private void initialiseDataSources() throws IOException {
-        dataSources = new BaseSource[]{new LocalWiki(), new GithubRepos()};
-    }
     public static void main( String[] args ) throws Exception {
         launch();
-    }
-
-    public void init() throws Exception {
-        initialiseDataSources();
-        System.out.println(this.dataSources);
     }
 
     @Override
@@ -41,7 +33,6 @@ public class App extends Application {
         loader.setLocation(xmlUrl);
         Parent root = loader.load();
         searchController = loader.getController();
-        searchController.setDataSources(dataSources);
         searchController.setStage(stage);
         Scene scene = new Scene(root);
         stage.setScene(scene);

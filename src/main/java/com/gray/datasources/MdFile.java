@@ -15,13 +15,14 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class MdFile extends GuiDataSourceResult{
+public class MdFile extends GuiDataSourceResult implements Serializable {
     public List<String> tags;
     public Path dir;
     private int scoreForQuery;
