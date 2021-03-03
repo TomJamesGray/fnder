@@ -24,11 +24,11 @@ import java.util.Scanner;
 
 public class MdFile extends GuiDataSourceResult implements Serializable {
     public List<String> tags;
-    public Path dir;
+    public String dir;
     private int scoreForQuery;
     public String title;
 
-    public MdFile(Path dir,String title, List<String> tags){
+    public MdFile(String dir,String title, List<String> tags){
         super(title);
         this.dir = dir;
         this.tags = tags;
@@ -44,7 +44,7 @@ public class MdFile extends GuiDataSourceResult implements Serializable {
 
     public String toString(){
         return String.format("%s[file name=%s,title=%s]",getClass().getSimpleName(),
-                dir.getFileName(),title);
+                dir,title);
     }
 
     /**
@@ -55,7 +55,7 @@ public class MdFile extends GuiDataSourceResult implements Serializable {
     public String[] getMdContent() {
         String content;
         try {
-            Scanner fScanner = new Scanner(new FileReader(dir.toString()));
+            Scanner fScanner = new Scanner(new FileReader(dir));
             StringBuilder contentBuilder = new StringBuilder();
             boolean inComment = false;
             while (fScanner.hasNext()){

@@ -2,7 +2,9 @@ package com.gray.datasources;
 
 import javafx.scene.layout.VBox;
 
-public class GuiDataSourceResult extends DataSourceResult{
+import java.io.Serializable;
+
+public class GuiDataSourceResult extends DataSourceResult implements Serializable {
     public String title;
     public VBox resultBox;
     public static final boolean writesToGui = true;

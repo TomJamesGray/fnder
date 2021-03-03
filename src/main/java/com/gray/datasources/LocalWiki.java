@@ -24,7 +24,7 @@ public class LocalWiki implements BaseSource{
         this.mdFiles = new MdFile[mdFilesPaths.length];
         for(int i =0;i < mdFilesPaths.length; i++){
             Pair<String,List<String>> titleAndTags = getTagsAndTitleForMdFile(mdFilesPaths[i]);
-            this.mdFiles[i] = new MdFile(mdFilesPaths[i],
+            this.mdFiles[i] = new MdFile(mdFilesPaths[i].toString(),
                     titleAndTags.getKey(),
                     titleAndTags.getValue());
         }
