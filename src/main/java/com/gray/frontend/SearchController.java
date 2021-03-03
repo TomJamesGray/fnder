@@ -1,9 +1,6 @@
 package com.gray.frontend;
 
-import com.gray.datasources.BaseSource;
-import com.gray.datasources.DataSourceResult;
-import com.gray.datasources.ServerResultList;
-import com.gray.datasources.URLResult;
+import com.gray.datasources.*;
 import javafx.event.Event;
 import javafx.event.EventDispatchChain;
 import javafx.event.EventHandler;
@@ -135,12 +132,23 @@ public class SearchController {
                 }
                 else if (keyEvent.getCode() == KeyCode.ENTER){
                     searchRoot.getChildren().clear();
-                    currentResults.get(currentHighlightedVbox).openResult(searchRoot);
+                    openResult(currentResults.get(currentHighlightedVbox));
                     keyEvent.consume();
                 }
             }
         });
 //        initConnection();
+    }
+
+    private void openResult(DataSourceResult res){
+        if (res instanceof GuiDataSourceResult){
+            searchRoot.getChildren().clear();
+            GuiDataSourceResult guiRes = (GuiDataSourceResult) res;
+            searchRoot.getChildren().add(guiRes.genVboxResult());
+        }
+        else{
+            res.openResult();
+        }
     }
 
     /**

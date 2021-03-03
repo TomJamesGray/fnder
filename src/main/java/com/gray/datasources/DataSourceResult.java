@@ -13,7 +13,7 @@ public class DataSourceResult extends RootDataSourceResult implements Serializab
         super();
         this.title = title;
     }
-    public void openResult(VBox container){
+    public void openResult(){
 
     }
 

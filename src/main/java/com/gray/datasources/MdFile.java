@@ -98,7 +98,7 @@ public class MdFile extends GuiDataSourceResult implements Serializable {
     }
 
 
-    public VBox genVboxResult(VBox container){
+    public VBox genVboxResult(){
         String[] mdContent = getMdContent();
         VBox scrollContainer = new VBox();
 
