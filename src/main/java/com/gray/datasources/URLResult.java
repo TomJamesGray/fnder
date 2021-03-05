@@ -3,14 +3,15 @@ package com.gray.datasources;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public class URLResult extends DataSourceResult {
+public class URLResult extends DataSourceResult implements Serializable {
     public String url;
     public URLResult(String title, String url) {
         super(title);
         this.url = url;
     }
-    public void openResult(VBox container){
+    public void openResult(){
         System.out.println("Opening " + title + " " + url);
         try{
             Runtime.getRuntime().exec(new String[] { "xdg-open", this.url });

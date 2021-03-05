@@ -1,7 +1,6 @@
-package com.gray;
+package com.gray.frontend;
 
-import com.gray.datasources.BaseSource;
-import com.gray.datasources.DataSourceResult;
+import com.gray.datasources.*;
 import javafx.event.Event;
 import javafx.event.EventDispatchChain;
 import javafx.event.EventHandler;
@@ -15,6 +14,9 @@ import javafx.stage.Stage;
 
 import javax.sql.DataSource;
 import javax.xml.crypto.Data;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +24,14 @@ public class SearchController {
     public TextField searchBox;
     public VBox searchRoot;
     public VBox resultsContainer;
-    private BaseSource[] dataSources;
     private Stage stage;
     private List<DataSourceResult> currentResults = new ArrayList<DataSourceResult>();
     private int currentHighlightedVbox = 0;
+
+    private Socket socket;
+    private ObjectInputStream socketIn;
+    private DataOutputStream socketOut;
+    public static final int socketPort = 6000;
 
     /**
      * Handles key press in the search box. Runs searches for
@@ -40,39 +46,43 @@ public class SearchController {
 //            in the event filter
             return;
         }
-
-
         resultsContainer.getChildren().clear();
         String query = searchBox.getText() + keyEvent.getText();
+        ServerResultList[] searchResults;
+        try {
+            searchResults = sendSearchQuery(query);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
         final int resHeight = 90;
         final int maxResults = 2;
         int totalResultAmount = 0;
         currentResults = new ArrayList<DataSourceResult>();
-        for (BaseSource dSource : dataSources){
-            DataSourceResult[] resultsForDSource = dSource.searchFor(query,maxResults);
-
-            if(resultsForDSource.length > 0){
+        for (ServerResultList resultsForDSource : searchResults){
+            if(resultsForDSource.getResults().length > 0){
 //                Add label describing the data source
-                Label dSourceLabel = new Label(dSource.getSourceName());
+                Label dSourceLabel = new Label(resultsForDSource.getdSourceTitle());
                 dSourceLabel.getStyleClass().add("dSourceLabel");
                 resultsContainer.getChildren().add(dSourceLabel);
             }
 
-            totalResultAmount += resultsForDSource.length;
-            for (int i = 0; i < resultsForDSource.length; i++){
-                VBox resVbox = resultsForDSource[i].resultBox;
+            totalResultAmount += resultsForDSource.getResults().length;
+            for (int i = 0; i < resultsForDSource.getResults().length; i++){
+                VBox resVbox = resultsForDSource.getResults()[i].getResultBox();
                 resultsContainer.getChildren().add(resVbox);
 //                Add onto currentResults list so we can access it later
-                currentResults.add(resultsForDSource[i]);
+                currentResults.add(resultsForDSource.getResults()[i]);
             }
         }
         stage.setHeight(totalResultAmount * resHeight + searchBox.getPrefHeight());
         if(currentResults.size() > 0) {
-            currentResults.get(0).resultBox.getStyleClass().add("resultsContainerActive");
+            currentResults.get(0).getResultBox().getStyleClass().add("resultsContainerActive");
             for(int i = 1;i < currentResults.size(); i++){
 //                Clear all other result boxes
-                currentResults.get(i).resultBox.getStyleClass().clear();
-                currentResults.get(i).resultBox.getStyleClass().add("resultsContainer");
+                currentResults.get(i).getResultBox().getStyleClass().clear();
+                currentResults.get(i).getResultBox().getStyleClass().add("resultsContainer");
             }
             currentHighlightedVbox = 0;
         }
@@ -93,11 +103,11 @@ public class SearchController {
                     if(numOfResults > 0){
                         if(currentHighlightedVbox - 1 >= 0){
                             System.out.println(searchBox.getCaretPosition());
-                            currentResults.get(currentHighlightedVbox).resultBox.
+                            currentResults.get(currentHighlightedVbox).getResultBox().
                                     getStyleClass().clear();
-                            currentResults.get(currentHighlightedVbox).resultBox.
+                            currentResults.get(currentHighlightedVbox).getResultBox().
                                     getStyleClass().add("resultsContainer");
-                            currentResults.get(currentHighlightedVbox - 1).resultBox.
+                            currentResults.get(currentHighlightedVbox - 1).getResultBox().
                                     getStyleClass().add("resultsContainerActive");
                             currentHighlightedVbox -= 1;
                         }
@@ -108,11 +118,11 @@ public class SearchController {
                 else if (keyEvent.getCode() == KeyCode.DOWN){
                     if(numOfResults > 0){
                         if(currentHighlightedVbox + 1 < numOfResults){
-                            currentResults.get(currentHighlightedVbox + 1).resultBox.
+                            currentResults.get(currentHighlightedVbox + 1).getResultBox().
                                     getStyleClass().add("resultsContainerActive");
-                            currentResults.get(currentHighlightedVbox).resultBox.
+                            currentResults.get(currentHighlightedVbox).getResultBox().
                                     getStyleClass().clear();
-                            currentResults.get(currentHighlightedVbox).resultBox.
+                            currentResults.get(currentHighlightedVbox).getResultBox().
                                     getStyleClass().add("resultsContainer");
                             currentHighlightedVbox += 1;
                         }
@@ -122,19 +132,60 @@ public class SearchController {
                 }
                 else if (keyEvent.getCode() == KeyCode.ENTER){
                     searchRoot.getChildren().clear();
-                    currentResults.get(currentHighlightedVbox).openResult(searchRoot);
+                    openResult(currentResults.get(currentHighlightedVbox));
                     keyEvent.consume();
                 }
             }
         });
+//        initConnection();
     }
 
-    public BaseSource[] getDataSources() {
-        return dataSources;
+    private void openResult(DataSourceResult res){
+        if (res instanceof GuiDataSourceResult){
+            searchRoot.getChildren().clear();
+            GuiDataSourceResult guiRes = (GuiDataSourceResult) res;
+            searchRoot.getChildren().add(guiRes.genVboxResult());
+        }
+        else{
+            res.openResult();
+            stage.close();
+        }
     }
 
-    public void setDataSources(BaseSource[] dataSources) {
-        this.dataSources = dataSources;
+    /**
+     * Starts connection to server
+     */
+    private void initConnection(){
+        try {
+            socket = new Socket("localhost",socketPort);
+            socketIn = new ObjectInputStream(socket.getInputStream());
+            socketOut = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void closeConnection(){
+        try{
+            socket.close();
+            socketIn.close();
+            socketOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ServerResultList[] sendSearchQuery(String msg) throws IOException, ClassNotFoundException {
+        initConnection();
+        socketOut.writeUTF(msg);
+        Object reply = socketIn.readObject();
+        closeConnection();
+        if(reply instanceof ServerResultList[]){
+            return (ServerResultList[]) reply;
+        }
+        else{
+            throw new IOException("Response from server is not a ServerResultList");
+        }
+
     }
 
 

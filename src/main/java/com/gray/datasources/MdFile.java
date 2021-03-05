@@ -15,19 +15,20 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class MdFile extends DataSourceResult{
+public class MdFile extends GuiDataSourceResult implements Serializable {
     public List<String> tags;
-    public Path dir;
+    public String dir;
     private int scoreForQuery;
     public String title;
 
-    public MdFile(Path dir,String title, List<String> tags){
+    public MdFile(String dir,String title, List<String> tags){
         super(title);
         this.dir = dir;
         this.tags = tags;
@@ -43,7 +44,7 @@ public class MdFile extends DataSourceResult{
 
     public String toString(){
         return String.format("%s[file name=%s,title=%s]",getClass().getSimpleName(),
-                dir.getFileName(),title);
+                dir,title);
     }
 
     /**
@@ -54,7 +55,7 @@ public class MdFile extends DataSourceResult{
     public String[] getMdContent() {
         String content;
         try {
-            Scanner fScanner = new Scanner(new FileReader(dir.toString()));
+            Scanner fScanner = new Scanner(new FileReader(dir));
             StringBuilder contentBuilder = new StringBuilder();
             boolean inComment = false;
             while (fScanner.hasNext()){
@@ -97,7 +98,7 @@ public class MdFile extends DataSourceResult{
     }
 
 
-    public void openResult(VBox container){
+    public VBox genVboxResult(){
         String[] mdContent = getMdContent();
         VBox scrollContainer = new VBox();
 
@@ -130,8 +131,8 @@ public class MdFile extends DataSourceResult{
         sp.setContent(scrollContainer);
         sp.setFitToHeight(true);
         sp.setFitToWidth(true);
-        container.getChildren().add(sp);
-
-
+        VBox spCont = new VBox();
+        spCont.getChildren().add(sp);
+        return spCont;
     }
 }
