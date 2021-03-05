@@ -195,5 +195,14 @@ public class SearchController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+        this.stage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if(keyEvent.getCode() == KeyCode.ESCAPE){
+//                    Close program
+                    stage.close();
+                }
+            }
+        });
     }
 }
