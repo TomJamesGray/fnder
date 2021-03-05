@@ -100,7 +100,6 @@ public class LocalWiki implements BaseSource{
 //                        Remove leading space
                         title = title.substring(1);
                     }
-                    System.out.println("Title " + title);
                     fScanner.close();
                     fScannerClosed = true;
                     break;
@@ -142,7 +141,6 @@ public class LocalWiki implements BaseSource{
         File[] files = folder.listFiles();
         for (File file : files){
             if (file.getName().endsWith(".md")){
-                System.out.println(file.getName());
                 mdFiles.add(Paths.get(file.toString()));
             }
             else if(file.isDirectory()){

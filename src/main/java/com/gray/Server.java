@@ -21,6 +21,11 @@ public class Server {
     public final static int serverPort = 6000;
     private List<BaseSource> dataSources = new ArrayList<>();
 
+    /**
+     * Initialises data sources through dependency injection of
+     * and class implementing `BaseSource`
+     * @param dSources
+     */
     @Inject
     void initDSources(@Any Instance<BaseSource> dSources){
         for (BaseSource dSource: dSources){
@@ -28,7 +33,11 @@ public class Server {
         }
     }
 
-
+    /**
+     * Entry point for server. Handles the dependency injection and starts the server
+     * @param args CLI Arguments
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         SeContainer container = null;
 
@@ -39,6 +48,11 @@ public class Server {
         server.startServer();
     }
 
+    /**
+     * Starts the server on the specified port. Accepts text queries as
+     * search queries and returns an ObjectStream of a ServerResultList[] to the client
+     * @throws IOException
+     */
     public void startServer() throws IOException {
         ServerSocket server = new ServerSocket(serverPort);
         while(true){

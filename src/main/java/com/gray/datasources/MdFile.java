@@ -82,6 +82,11 @@ public class MdFile extends GuiDataSourceResult implements Serializable {
         return(content.split("(?:[\\^\\$\\$]+)"));
     }
 
+    /**
+     * Converts a Buffered image into an Image that can be displayed by javafx
+     * @param image A Buffered image
+     * @return A javafx image
+     */
     private static Image convertToFxImage(BufferedImage image) {
         WritableImage wr = null;
         if (image != null) {
@@ -97,7 +102,10 @@ public class MdFile extends GuiDataSourceResult implements Serializable {
         return new ImageView(wr).getImage();
     }
 
-
+    /**
+     * Generates the VBox that is rendered by JavaFx containing the markdown
+     * @return VBox
+     */
     public VBox genVboxResult(){
         String[] mdContent = getMdContent();
         VBox scrollContainer = new VBox();

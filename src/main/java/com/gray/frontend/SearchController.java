@@ -137,7 +137,6 @@ public class SearchController {
                 }
             }
         });
-//        initConnection();
     }
 
     private void openResult(DataSourceResult res){
@@ -164,6 +163,10 @@ public class SearchController {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Closes connection to server
+     */
     private void closeConnection(){
         try{
             socket.close();
@@ -174,6 +177,13 @@ public class SearchController {
         }
     }
 
+    /**
+     * Sends search queries to the server and returns the result object
+     * @param msg Search query, provided by the user
+     * @return ServerResultList array
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private ServerResultList[] sendSearchQuery(String msg) throws IOException, ClassNotFoundException {
         initConnection();
         socketOut.writeUTF(msg);
@@ -188,11 +198,15 @@ public class SearchController {
 
     }
 
-
     public Stage getStage() {
         return stage;
     }
 
+    /**
+     * Sets the stage property and adds an event filter to catch presses
+     * of the escape key which close the program
+     * @param stage
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
         this.stage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {

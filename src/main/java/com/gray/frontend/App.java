@@ -15,9 +15,6 @@ import java.util.Scanner;
 
 public class App extends Application {
     private SearchController searchController;
-    private BaseSource[] dataSources;
-    public final boolean background = false;
-    public final int serverPort = 6000;
 
     public static void main( String[] args ) throws Exception {
         launch();
@@ -37,12 +34,5 @@ public class App extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-    }
-
-    public static String getInput(String prompt){
-        Scanner input = new Scanner(System.in);
-        System.out.print(prompt);
-        String val = input.nextLine();
-        return(val);
     }
 }

@@ -18,6 +18,11 @@ import java.util.*;
 public class GithubRepos implements BaseSource{
     public static final String userName = "TomJamesGray";
     private URLResult[] repos;
+
+    /**
+     * Initialises data source by reading repo information from github API
+     * @throws IOException
+     */
     public GithubRepos() throws IOException {
         JSONArray x = new JSONArray();
         try {
@@ -34,6 +39,12 @@ public class GithubRepos implements BaseSource{
         System.out.println(repos);
     }
 
+    /**
+     * Reads all the content in from a reader and returns it
+     * @param rd Reader
+     * @return String with all the reader content
+     * @throws IOException
+     */
     private static String readAll(Reader rd) throws IOException{
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -43,6 +54,13 @@ public class GithubRepos implements BaseSource{
         return sb.toString();
     }
 
+    /**
+     * Reads in all JSON content from a url
+     * @param url
+     * @return
+     * @throws IOException
+     * @throws ParseException - When the JSON is badly formed
+     */
     public static JSONArray readJSON(String url) throws IOException, ParseException {
         InputStream is = new URL(url).openStream();
 
@@ -53,6 +71,12 @@ public class GithubRepos implements BaseSource{
         return json;
     }
 
+    /**
+     * Compares search query against the repositories
+     * @param query Search query
+     * @param maxResults Maximum amount of results the search query should return
+     * @return Array of data source results
+     */
     @Override
     public DataSourceResult[] searchFor(String query, int maxResults) {
 //        return new DataSourceResult[0];
