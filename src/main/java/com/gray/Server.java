@@ -15,7 +15,7 @@ public class Server {
     }
 
     public void startServer() throws IOException {
-        //        Initialise data sources
+        // Initialise data sources
         dataSources = new BaseSource[]{new GithubRepos(), new LocalWiki()};
         ServerSocket server = new ServerSocket(serverPort);
         while(true){

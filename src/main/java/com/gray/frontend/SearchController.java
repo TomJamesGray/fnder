@@ -148,6 +148,7 @@ public class SearchController {
         }
         else{
             res.openResult();
+            stage.close();
         }
     }
 
