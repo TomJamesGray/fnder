@@ -60,18 +60,18 @@ public class Server {
             System.out.println("Accepted conn");
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream(socket.getInputStream());
-
+            out.writeObject(dataSources.size());
             String searchQuery = (String)in.readUTF();
 
             System.out.println(searchQuery);
-            ServerResultList[] outputs = new ServerResultList[dataSources.size()];
+//            ServerResultList[] outputs = new ServerResultList[dataSources.size()];
             for (int i = 0; i < dataSources.size(); i++){
                 DataSourceResult[] dSourceResults = dataSources.get(i).searchFor(searchQuery,2);
-                outputs[i] = new ServerResultList();
-                outputs[i].setdSourceTitle(dataSources.get(i).getSourceName());
-                outputs[i].setResults(dSourceResults);
+                ServerResultList svRes =  new ServerResultList();
+                svRes.setdSourceTitle(dataSources.get(i).getSourceName());
+                svRes.setResults(dSourceResults);
+                out.writeObject(svRes);
             }
-            out.writeObject(outputs);
             in.close();
             socket.close();
         }

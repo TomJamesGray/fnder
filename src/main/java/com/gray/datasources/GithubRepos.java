@@ -50,7 +50,6 @@ public class GithubRepos implements BaseSource{
     public static URLResult[] generateGhReposArr(JSONArray x){
         URLResult[] repos = new URLResult[x.size()];
         for (int i = 0; i < x.size(); i++){
-            System.out.println(i);
             JSONObject repo = (JSONObject) x.get(i);
             repos[i] = new URLResult(repo.get("name").toString(),repo.get("svn_url").toString());
         }

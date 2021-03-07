@@ -49,9 +49,10 @@ public class SearchController {
         resultsContainer.getChildren().clear();
         String query = searchBox.getText() + keyEvent.getText();
         ServerResultList[] searchResults;
+        int numOfResults = 0;
         try {
-            searchResults = sendSearchQuery(query);
-        } catch (IOException | ClassNotFoundException e) {
+            numOfResults = sendSearchQuery(query);
+        } catch (IOException e) {
             e.printStackTrace();
             return;
         }
@@ -60,7 +61,24 @@ public class SearchController {
         final int maxResults = 2;
         int totalResultAmount = 0;
         currentResults = new ArrayList<DataSourceResult>();
-        for (ServerResultList resultsForDSource : searchResults){
+        for (int j = 0; j < numOfResults; j++){
+            Object objIn;
+            ServerResultList resultsForDSource;
+            try {
+                objIn = socketIn.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            if (objIn instanceof ServerResultList){
+                resultsForDSource = (ServerResultList) objIn;
+            }
+            else{
+                System.out.println("Expected ServerResultList. Got " + objIn.getClass());
+                return;
+            }
+
             if(resultsForDSource.getResults().length > 0){
 //                Add label describing the data source
                 Label dSourceLabel = new Label(resultsForDSource.getdSourceTitle());
@@ -76,6 +94,7 @@ public class SearchController {
                 currentResults.add(resultsForDSource.getResults()[i]);
             }
         }
+        closeConnection();
         stage.setHeight(totalResultAmount * resHeight + searchBox.getPrefHeight());
         if(currentResults.size() > 0) {
             currentResults.get(0).getResultBox().getStyleClass().add("resultsContainerActive");
@@ -154,14 +173,19 @@ public class SearchController {
     /**
      * Starts connection to server
      */
-    private void initConnection(){
+    private int initConnection(){
         try {
             socket = new Socket("localhost",socketPort);
             socketIn = new ObjectInputStream(socket.getInputStream());
             socketOut = new DataOutputStream(socket.getOutputStream());
-        } catch (IOException e) {
+            Object numOfResults = socketIn.readObject();
+            if(numOfResults instanceof Integer){
+                return (int) numOfResults;
+            }
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
     /**
@@ -184,18 +208,10 @@ public class SearchController {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private ServerResultList[] sendSearchQuery(String msg) throws IOException, ClassNotFoundException {
-        initConnection();
+    private int sendSearchQuery(String msg) throws IOException {
+        int numOfResults = initConnection();
         socketOut.writeUTF(msg);
-        Object reply = socketIn.readObject();
-        closeConnection();
-        if(reply instanceof ServerResultList[]){
-            return (ServerResultList[]) reply;
-        }
-        else{
-            throw new IOException("Response from server is not a ServerResultList");
-        }
-
+        return numOfResults;
     }
 
     public Stage getStage() {
