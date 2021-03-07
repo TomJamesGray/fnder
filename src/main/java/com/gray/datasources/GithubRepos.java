@@ -16,7 +16,8 @@ import java.util.*;
 
 
 public class GithubRepos implements BaseSource{
-    public static final String userName = "TomJamesGray";
+    public String reposUrl = "https://api.github.com/users/TomJamesGray/repos";
+    private JSONArray jsonArrData;
     private URLResult[] repos;
 
     /**
@@ -24,19 +25,11 @@ public class GithubRepos implements BaseSource{
      * @throws IOException
      */
     public GithubRepos() throws IOException {
-        JSONArray x = new JSONArray();
         try {
-            x = readJSON("https://api.github.com/users/TomJamesGray/repos");
-        }
-        catch(ParseException e) {
+            repos = generateGhReposArr(readJSON(reposUrl));
+        } catch (ParseException e) {
             e.printStackTrace();
         }
-        repos = new URLResult[x.size()];
-        for (int i = 0; i < x.size(); i++){
-            JSONObject repo = (JSONObject) x.get(i);
-            repos[i] = new URLResult(repo.get("name").toString(),repo.get("svn_url").toString());
-        }
-        System.out.println(repos);
     }
 
     /**
@@ -52,6 +45,16 @@ public class GithubRepos implements BaseSource{
             sb.append((char) cp);
         }
         return sb.toString();
+    }
+
+    public static URLResult[] generateGhReposArr(JSONArray x){
+        URLResult[] repos = new URLResult[x.size()];
+        for (int i = 0; i < x.size(); i++){
+            System.out.println(i);
+            JSONObject repo = (JSONObject) x.get(i);
+            repos[i] = new URLResult(repo.get("name").toString(),repo.get("svn_url").toString());
+        }
+        return repos;
     }
 
     /**
@@ -101,6 +104,10 @@ public class GithubRepos implements BaseSource{
         return (scoresOutput.toArray(new URLResult[0]));
 //        return scores;
 //        return new DataSourceResult[0];
+    }
+
+    public URLResult[] getRepos() {
+        return repos;
     }
 
     @Override

@@ -11,6 +11,9 @@ public class URLResult extends DataSourceResult implements Serializable {
         super(title);
         this.url = url;
     }
+    public String toString(){
+        return String.format("%s[title=%s]",getClass().getSimpleName(),title);
+    }
     public void openResult(){
         try{
             Runtime.getRuntime().exec(new String[] { "xdg-open", this.url });

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "0",
+    "name": "repo0",
+    "svn_url": "repo0-url"
+  },
+  {
+    "id": "1",
+    "name": "repo1",
+    "svn_url": "repo1-url"
+  }
+]
