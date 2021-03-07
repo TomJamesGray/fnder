@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -41,14 +42,11 @@ public class GithubRepoTest {
     }
 
     @Test
-    public void testGetRepos() throws IOException, ParseException {
-        JSONArray jsonArrMock = mock(JSONArray.class);
-        when(jsonArrMock.get(0)).thenReturn(egJson.get(0));
-        when(jsonArrMock.get(1)).thenReturn(egJson.get(1));
-        when(jsonArrMock.size()).thenReturn(egJson.size());
-
-        URLResult[] testResults = GithubRepos.generateGhReposArr(jsonArrMock);
-        System.out.println(Arrays.toString(testResults));
-
+    public void testGetRepos() {
+        URLResult[] testResults = GithubRepos.generateGhReposArr(egJson);
+        for (int i = 0; i < testResults.length; i++){
+            assertEquals(testResults[i].url,"repo" + i + "-url");
+            assertEquals(testResults[i].title,"repo"+ i);
+        }
     }
 }
