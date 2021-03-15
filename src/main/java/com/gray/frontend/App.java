@@ -3,6 +3,7 @@ package com.gray.frontend;
 import com.gray.datasources.BaseSource;
 import com.gray.datasources.GithubRepos;
 import com.gray.datasources.LocalWiki;
+import com.gray.datasources.WikipediaSearch;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

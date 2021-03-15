@@ -38,7 +38,7 @@ public class GithubRepos implements BaseSource{
      * @return String with all the reader content
      * @throws IOException
      */
-    private static String readAll(Reader rd) throws IOException{
+    public static String readAll(Reader rd) throws IOException{
         StringBuilder sb = new StringBuilder();
         int cp;
         while((cp = rd.read()) != -1){
