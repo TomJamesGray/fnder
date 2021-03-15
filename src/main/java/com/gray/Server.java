@@ -57,23 +57,9 @@ public class Server {
         ServerSocket server = new ServerSocket(serverPort);
         while(true){
             Socket socket = server.accept();
-            System.out.println("Accepted conn");
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-            out.writeObject(dataSources.size());
-            String searchQuery = (String)in.readUTF();
-
-            System.out.println(searchQuery);
-//            ServerResultList[] outputs = new ServerResultList[dataSources.size()];
-            for (int i = 0; i < dataSources.size(); i++){
-                DataSourceResult[] dSourceResults = dataSources.get(i).searchFor(searchQuery,2);
-                ServerResultList svRes =  new ServerResultList();
-                svRes.setdSourceTitle(dataSources.get(i).getSourceName());
-                svRes.setResults(dSourceResults);
-                out.writeObject(svRes);
-            }
-            in.close();
-            socket.close();
+            new Thread(
+                    new ClientHandler(socket,this.dataSources)
+            ).start();
         }
     }
 }
